@@ -26,21 +26,44 @@ async function run() {
     try {
         await client.connect();
         console.log('DB connected.');
-        const serviceCollection = client.db('geniusCar').collection('service');
+        const itemCollection = client.db('geniusCar').collection('ritems');
 
-        app.get('/service', async (req, res) => {
+        // get all items
+        app.get('/items', async (req, res) => {
             const query = {};
-            const cursor = serviceCollection.find(query);
-            const services = await cursor.toArray();
-            res.send(services);
+            const cursor = itemCollection.find(query);
+            const items = await cursor.toArray();
+            res.send(items);
         });
 
-        app.get('/service/:id', async (req, res) => {
+        // get single item
+        app.get('/items/:id', async (req, res) => {
             const query = {
                 _id: ObjectId(req.params.id),
             };
-            const service = await serviceCollection.findOne(query);
-            res.send(service);
+            const item = await itemCollection.findOne(query);
+            res.send(item);
+        });
+
+        // delete single item
+        app.delete('/items/:id', async (req, res) => {
+            const query = {
+                _id: ObjectId(req.params.id),
+            };
+            await itemCollection.deleteOne(query);
+            res.json({ message: 'ok' });
+        });
+
+        // update single item
+        app.put('/items/:id', async (req, res) => {
+            const query = {
+                _id: ObjectId(req.params.id),
+            };
+            await itemCollection.updateOne(query, {
+                $set: req.body,
+                $currentDate: { lastModified: true },
+            });
+            res.json({ message: 'ok' });
         });
     } finally {
     }
