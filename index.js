@@ -31,6 +31,7 @@ async function run() {
         // get all items
         app.get('/items', async (req, res) => {
             const query = {};
+            if (req.query.supplier) query.supplier = req.query.supplier;
             const cursor = itemCollection.find(query);
             const items = await cursor.toArray();
             res.send(items);
