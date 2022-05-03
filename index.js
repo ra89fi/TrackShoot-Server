@@ -37,6 +37,12 @@ async function run() {
             res.send(items);
         });
 
+        // insert single item
+        app.post('/items', async (req, res) => {
+            await itemCollection.insertOne(req.body);
+            res.json({ message: 'ok' });
+        });
+
         // get single item
         app.get('/items/:id', async (req, res) => {
             const query = {
